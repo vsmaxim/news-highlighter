@@ -1,0 +1,18 @@
+{
+    "name": "News highlighter",
+    "version": "1.0",
+    "description": "Highlight new info in news",
+    "browser_action": {
+        "default_title": "News highlighter",
+        "default_popup": "popup.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://meduza.io/*"],
+            "run_at": "document_end",
+            "js": ["highlighter.js"],
+            "css": ["highlighter.css"]
+        }        
+    ],
+    "manifest_version": 2
+}
