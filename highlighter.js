@@ -1,21 +1,40 @@
-// Test page: https://meduza.io/news/2020/04/14/kolichestvo-umershih-ot-koronavirusnoy-infektsii-v-moskve-vyroslo-do-95-chelovek
+function getPartsToHighlight() {
+    return new Promise(resolve => chrome.runtime.sendMessage(
+        {contentScriptQuery: "queryDifference", source: window.location.toString()},
+        resolve,
+    ));
+}
 
-const partsToHighlight = [
-    `имели сопутствующие заболевания. Среди них — хронический бронхит,`,
-    `в ближайшие две-три недели в городе возникнет дефицит мест в больницах`,
-];
+function tokensToRegexp(tokens) {
+    return tokens.join('.+');
+}
 
-let body = document.getElementsByTagName('body')[0];
+function tokensToString(tokens) {
+    return tokens.join(' ');
+}
 
-for (let part of partsToHighlight) {
-    let innerHTML = body.innerHTML.replace(/&nbsp;/g, " ");
-    let index = innerHTML.indexOf(part);
+function doSearch(text, backgroundColor) {
+    if (window.find && window.getSelection) {
+        document.designMode = "on";
+        var sel = window.getSelection();
+        sel.collapse(document.body, 0);
 
-    if (index >= 0) {
-        let leftPart = innerHTML.substring(0, index);
-        let textPart = innerHTML.substring(index, index + part.length);
-        let rightPart = innerHTML.substring(index + part.length);
+        while (window.find(text)) {
+            document.execCommand("HiliteColor", false, backgroundColor);
+            sel.collapseToEnd();
+        }
 
-        body.innerHTML = `${leftPart}<span class="highlighted">${textPart}</span>${rightPart}`;
+        document.designMode = "off";
     }
 }
+
+function highlightParts() {
+    getPartsToHighlight().then(partsDiffs => {
+        partsDiffs = partsDiffs.filter(diff => diff.difference > 1);
+        for (let part of partsDiffs) {
+            doSearch(part.sentence, "yellow");
+        }
+    })
+}
+
+highlightParts();
