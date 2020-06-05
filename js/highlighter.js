@@ -1,6 +1,6 @@
 function getPartsToHighlight() {
     return new Promise(resolve => chrome.runtime.sendMessage(
-        {contentScriptQuery: "queryDifference", source: window.location.toString()},
+        {query: "queryDifference", source: window.location.toString()},
         resolve,
     ));
 }
@@ -30,7 +30,7 @@ function doSearch(text, backgroundColor) {
 
 function highlightParts() {
     getPartsToHighlight().then(partsDiffs => {
-        partsDiffs = partsDiffs.filter(diff => diff.difference > 1);
+        partsDiffs = partsDiffs.filter(diff => diff.difference > 7);
         for (let part of partsDiffs) {
             doSearch(part.sentence, "yellow");
         }

@@ -3,7 +3,7 @@
     "version": "1.0",
     "description": "Highlight new info in news",
     "background": {
-        "scripts": ["background.js"],
+        "scripts": ["js/background.js"],
         "persistent": false
     },
     "browser_action": {
@@ -14,11 +14,12 @@
         {
             "matches": ["https://meduza.io/*", "https://lenta.ru/*"],
             "run_at": "document_end",
-            "js": ["highlighter.js"],
-            "css": ["highlighter.css"]
+            "js": ["js/highlighter.js"],
+            "css": ["css/highlighter.css"]
         }        
     ],
     "permissions": [
+        "storage",
         "http://localhost:8000/"
     ],
     "manifest_version": 2
